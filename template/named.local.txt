@@ -1,0 +1,17 @@
+// ZONES
+
+<% for(var a in zones) { %>
+zone "<%= zones[a].domName %>" {
+        type master;
+        file "/etc/bind/zones/<%= zones[a].domName %>.zone";
+}; 
+<% } %>
+
+// REVERSES
+
+<% for(var a in revert) { %>
+zone "<%= revert[a].arpa %>" IN {
+        type master;
+        file "/etc/bind/zones/<%= revert[a].arpa %>";
+}; 
+<% } %>

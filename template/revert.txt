@@ -1,0 +1,12 @@
+@       IN      SOA     ns.<%= config.domain %>. root.<%= config.domain %>.     (
+	<%= serial %>      ;serial
+	14400              ;refresh
+	3600               ;retry
+	604800             ;expire
+	10800                ;minimum
+)
+ 
+<%= arpa %>.	IN	NS	ns.<%= config.domain %>.
+
+<% for(var a in list) { %>
+<%= a %>	IN	PTR	<%= list[a] %>.<% } %>

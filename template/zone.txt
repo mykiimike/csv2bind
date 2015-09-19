@@ -1,0 +1,14 @@
+$ORIGIN <%= domName %>.
+$TTL <%= config.zoneMinimum %>
+@	SOA	<%= domName %>. root.<%= domName %>. (
+		<%= serial %>
+		<%= config.zoneRefresh %>
+		<%= config.zoneRetry %>
+		<%= config.zoneExpire %>
+		<%= config.zoneMinimum %> )
+<% for(var a in nss) { %>		
+		NS	<%= nss[a] %>.<%= domName %>.<% } %>
+<% for(var a in defaultAddress) { %>		
+		A	<%= defaultAddress[a] %><% } %>
+<% for(var a in list) { %>
+<%= a %>		A	<%= list[a] %><% } %>

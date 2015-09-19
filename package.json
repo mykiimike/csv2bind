@@ -1,0 +1,35 @@
+{
+	"name": "csv2bind",
+	"description": "Simple bind9 CSV translator",
+	"version": "1.0.0",
+ 	"license": "GPLv3",
+	"keywords": [
+		"bind",
+		"bind9",
+		"csv",
+		"to",
+		"csv2bind",
+		"generator"
+	],
+	"main": "index.js",
+	"dependencies": {
+		"ejs": "^1.0.0",
+		"ip": "^1.0.1",
+		"colors": "^1.1.2",
+		"clim": "^1.1.1",
+		"node-jen": "^1.0.4"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/mykiimike/csv2bind.git"
+	},
+	"homepage": "https://github.com/mykiimike/csv2bind",
+	"bugs": {
+		"email": "mv@verman.fr",
+		"url": "https://github.com/mykiimike/csv2bind/issues"
+	},
+	"author": "Michael Vergoz <mv@verman.fr>",
+	"bin" : { 
+		"csv2bind" : "./index.js" 
+	}
+}
