@@ -1,7 +1,7 @@
 {
 	"name": "csv2bind",
 	"description": "Simple bind9 CSV translator",
-	"version": "1.0.0",
+	"version": "1.0.1",
  	"license": "GPL-3.0",
 	"keywords": [
 		"bind",
