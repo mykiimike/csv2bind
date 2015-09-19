@@ -9,11 +9,10 @@ var pass = fs.readFileSync(__dirname+"/worst500pass.txt").toString().split("\n")
 var result = 'ns.'+domain+";"+ipTrans.fromLong(ipTrans.toLong(bits16pre)+jen.random(2))+"\n";
 result += 'root.'+domain+";"+ipTrans.fromLong(ipTrans.toLong(bits16pre)+jen.random(2))+"\n";
 
-for(var a=0; a<jen.randomBetween(10000, 5000); a++) {
-	var domainN = jen.randomBetween(4);
+for(var a=0; a<jen.randomBetween(20000, 5000); a++) {
 	var ns = '';
 	
-	for(var b=0; b<jen.randomBetween(6, 2); b++) {
+	for(var b=0; b<jen.randomBetween(2, 1); b++) {
 		
 		var word = pass[jen.randomBetween(pass.length)];
 		ns += word+'.';

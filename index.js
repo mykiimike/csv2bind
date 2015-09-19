@@ -160,7 +160,6 @@ context.prototype.addFile = function(file) {
 		console.info(self.linesNum+" lines processed from "+file);
 		if(self.filtered > 0)
 			console.warn(self.filtered+" filtered entries in "+file);
-		console.info(self.inputs+" entries found in "+file);
 		
 		if(self.filtered > 0 && self.inputs == 0)
 			console.warn("Actually you only have filtered entries you probably need to change the TLD using -domain");
@@ -190,41 +189,7 @@ context.prototype.render = function(dir, cb) {
 			for(var a in self.lines)
 				self.firstPass(self.lines[a]);
 			
-			/*
-			if(self.zoneFile.hasOwnProperty(self.config.domain)) {
-				var mustDefined = {
-					"ns": true,
-				};
-				
-				var defaultUpDomain = {};
-				var upDomain = self.zoneFile[self.config.domain];
-				for(var a in mustDefined) {
-					if(!upDomain.hasOwnProperty(a)) {
-						console.warn("No "+a+" entry for zone "+self.config.domain);
-					}
-					else
-						defaultUpDomain[a] = upDomain[a];
-				}
-				
-				for(var zfile in self.zoneFile) {
-					var entry = self.zoneFile[zfile];
-					for(var a in mustDefined) {
-						if(!entry.hasOwnProperty(a)) {
-							if(defaultUpDomain.hasOwnProperty(a)) {
-								self.zoneFile[zfile][a] = defaultUpDomain[a];
-								//console.info("No "+a+" entry for zone "+zfile+" using default from up domain "+defaultUpDomain[a]);
-							}
-							else {
-								console.warn("No "+a+" entry for zone "+zfile+" and no default entry from up domain");
-							}
-						}
-					}
-				}
-			}
-			else
-				console.warn("Warning no zone found for upDomain "+self.config.domain);
-			*/
-			//console.log(self.zoneFile);
+			console.info(self.inputs+" entries found and selected");
 			
 			var namedLocalZone = [];
 			var namedLocalRevert = [];
@@ -277,11 +242,11 @@ context.prototype.render = function(dir, cb) {
 							console.error("No root entry defined for "+zfile+" can not default to NS!!");
 						else {
 							self.zoneFile[zfile]["root"] = TLD['ns'];
-							console.info("No root entry defined for "+zfile+" default to TLD NS");
+							console.log("No root entry defined for "+zfile+" default to TLD NS");
 						}
 					}
 					else {
-						console.info("No root entry defined for "+zfile+" default to NS");
+						console.log("No root entry defined for "+zfile+" default to NS");
 						self.zoneFile[zfile]["root"] = self.zoneFile[zfile][nss[0]];
 					}
 				}
@@ -417,6 +382,7 @@ if(check("help") || check("-help")) {
 	console.log("Basic commands");
 	console.log("  --help: This message");
 	console.log("  --version: Version message");
+	console.log("  --verbose: Display log message");
 	console.log("  --demo: Generate a demo CSV file");
 	//console.log("  --quiet: Set quiet mode");
 	console.log("List of supported options");
@@ -448,9 +414,13 @@ if(check("demo") || check("-demo")) {
 	process.exit(0);
 }
 
+/* is verbose ? */
+console = clim();
+if(!check("verbose") && !check("-verbose")) {
+	console.log = function(m) {};
+}
 
 /* initialize app */
-console = clim();
 console.info("csv2bind - Simple bind9 CSV translator version "+pack.version);
 
 /* check config */
