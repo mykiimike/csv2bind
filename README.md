@@ -15,23 +15,23 @@ Your CSV files must be formated as following :
 The rest is ignored.
 
 Get options and commands help:
-```bash
+```sh
 csv2bind --help
 ```
 
 Generate bind9 files:
-```bash
+```sh
 csv2bind --help
 csv2bind -domain=mydomain.com file1.csv file2.csv file3.csv
 ```
 
 Generate a demonstration CSV:
-```bash
+```sh
 csv2bind --demo
 ```
 
 Process demonstration file and generate bind0 files:
-```bash
+```sh
 csv2bind ./csv2bindDemo.csv
 ```
 
