@@ -2,7 +2,7 @@
 	"name": "csv2bind",
 	"description": "Simple bind9 CSV translator",
 	"version": "1.0.0",
- 	"license": "GPLv3",
+ 	"license": "GPL-3.0",
 	"keywords": [
 		"bind",
 		"bind9",
@@ -30,6 +30,6 @@
 	},
 	"author": "Michael Vergoz <mv@verman.fr>",
 	"bin" : { 
-		"csv2bind" : "./index.js" 
+		"csv2bind" : "./index.js"
 	}
 }

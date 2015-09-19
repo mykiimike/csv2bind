@@ -8,16 +8,31 @@ sudo npm install -g csv2bind
 ```
 
 ## Run
-
-You CSV files must be formated as following :
+Your CSV files must be formated as following :
 * Column 1 : Hostname
 * Column 2 : IP address or CNAME
 
 The rest is ignored.
 
+Get options and commands help:
+```bash
+csv2bind --help
+```
+
+Generate bind9 files:
 ```bash
 csv2bind --help
 csv2bind -domain=mydomain.com file1.csv file2.csv file3.csv
+```
+
+Generate a demonstration CSV:
+```bash
+csv2bind --demo
+```
+
+Process demonstration file and generate bind0 files:
+```bash
+csv2bind ./csv2bindDemo.csv
 ```
 
 ## Key features
@@ -26,7 +41,7 @@ csv2bind -domain=mydomain.com file1.csv file2.csv file3.csv
 * Auto reverse IP file generator (ARPA)
 * DHCP integration
 * Manage nameservers zone declaration
-* Compute multiple files
+* Compute multiple files together
 
 ## In-file options
 * **dhcp-X** : define a DHCP pool domain generator. For example dhcp-100.domain.com will generate 100 entries such as **dhcp-1-lease.domain.com** starting at the __IP given address__. The rendering pattern is modifiable by **dhcpEJS**

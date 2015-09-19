@@ -25,4 +25,4 @@ for(var a=0; a<jen.randomBetween(10000, 5000); a++) {
 	result += ns+";"+ip+"\n";
 }
 
-fs.writeFileSync("demo.csv", result);
+fs.writeFileSync("./csv2bindDemo.csv", result);

@@ -417,6 +417,7 @@ if(check("help") || check("-help")) {
 	console.log("Basic commands");
 	console.log("  --help: This message");
 	console.log("  --version: Version message");
+	console.log("  --demo: Generate a demo CSV file");
 	//console.log("  --quiet: Set quiet mode");
 	console.log("List of supported options");
 	for(var a in config)
@@ -439,6 +440,14 @@ if(check("version") || check("-version")) {
 	);
 	process.exit(0);
 }
+
+/* is demo ? */
+if(check("demo") || check("-demo")) {
+	console.info("Generating a random CSV file at ./csv2bindDemo.csv");
+	require("child_process").execSync("node "+__dirname+"/test/generateCSV.js");
+	process.exit(0);
+}
+
 
 /* initialize app */
 console = clim();
