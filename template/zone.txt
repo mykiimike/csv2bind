@@ -18,5 +18,8 @@ $TTL <%= config.zoneMinimum %>
 		A	<%= defaultAddress[a] %><% } %>
 <% for(var a in cname) { %>
 <%= a %>		CNAME	<%= cname[a] %>.<% } %>
+
 <% for(var a in list) { %>
-<%= a %>		A	<%= list[a] %><% } %>
+
+<%= a %>		A	<%= list[a] %>
+<% } %>

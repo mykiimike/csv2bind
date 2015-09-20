@@ -100,7 +100,8 @@ context.prototype.firstPass = function(line) {
 			/* is assignator an IP ? */
 			if(!regexIPv4.test(ip)) {
 				
-				/* is a CNAME ?? */
+				/* is a CNAME ? removed for the moment */
+				/*
 				if(regexDomain.test(ip) && ip.split('.').length > 1) {
 					if(!self.zoneCNAME[domName].hasOwnProperty(domNamePre)) {
 						self.zoneCNAME[domName][domNamePre] = ip;
@@ -111,7 +112,7 @@ context.prototype.firstPass = function(line) {
 					console.info("Two CNAMEs are used for the same entry: "+ns+" pointing to "+ip);
 					return;
 				}
-				
+				*/
 				return;
 			}
 			
@@ -289,6 +290,14 @@ context.prototype.render = function(cb) {
 					}
 				}
 				
+				/* check CNAME collision */
+				for(var a in self.zoneCNAME[zfile]) {
+					var cname = self.zoneCNAME[zfile][a];
+					console.log(a, cname)
+					
+				}
+				
+				/* minimal */
 				if(!self.defaultAddress.hasOwnProperty(zfile))
 					self.defaultAddress[zfile] = [];
 				
@@ -298,6 +307,7 @@ context.prototype.render = function(cb) {
 					serial: serial,
 					list: self.zoneFile[zfile],
 					defaultAddress: self.defaultAddress[zfile],
+					ips: self.zoneIPS[zfile],
 					nss: nss,
 					cname: self.zoneCNAME[zfile],
 				});
