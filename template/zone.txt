@@ -1,3 +1,9 @@
+; Zone file automatically generated with csv2bind
+; DATE
+; TLD: <%= config.domain %>
+; Subdomain: <%= domName %>
+; https://www.npmjs.com/package/csv2bind 
+; 
 $ORIGIN <%= domName %>.
 $TTL <%= config.zoneMinimum %>
 @	SOA	<%= domName %>. root.<%= domName %>. (
@@ -10,5 +16,7 @@ $TTL <%= config.zoneMinimum %>
 		NS	<%= nss[a] %>.<%= domName %>.<% } %>
 <% for(var a in defaultAddress) { %>		
 		A	<%= defaultAddress[a] %><% } %>
+<% for(var a in cname) { %>
+<%= a %>		CNAME	<%= cname[a] %>.<% } %>
 <% for(var a in list) { %>
 <%= a %>		A	<%= list[a] %><% } %>

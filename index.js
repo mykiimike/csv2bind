@@ -34,6 +34,7 @@ function context(config) {
 	this.revertFile = {};
 	this.defaultAddress = {};
 	this.zoneIPS = {};
+	this.zoneCNAME = {};
 	this.compute = 0;
 	this.config = config;
 	this.tld = config.domain.split('.');
@@ -47,7 +48,8 @@ function context(config) {
 var regexDHCP = /^dhcp-([0-9]+)\./;
 var regexNS = /^ns([0-9]+)/;
 var regexDomain = /^([a-z0-9_.-]+)$/i;
-	
+var regexIPv4 = /^([0-9]+).([0-9]+).([0-9]+).([0-9]+)$/;
+
 context.prototype.firstPass = function(line) {
 	var self = this;
 	
@@ -88,6 +90,31 @@ context.prototype.firstPass = function(line) {
 				}
 			}
 	
+			/* initial */
+			if(!self.zoneFile.hasOwnProperty(domName)) {
+				self.zoneFile[domName] = {};
+				self.zoneIPS[domName] = {};
+				self.zoneCNAME[domName] = {};
+			}
+			
+			/* is assignator an IP ? */
+			if(!regexIPv4.test(ip)) {
+				
+				/* is a CNAME ?? */
+				if(regexDomain.test(ip) && ip.split('.').length > 1) {
+					if(!self.zoneCNAME[domName].hasOwnProperty(domNamePre)) {
+						self.zoneCNAME[domName][domNamePre] = ip;
+						console.log("Adding CNAME "+ns+" > "+ip);
+						return;
+					}
+					
+					console.info("Two CNAMEs are used for the same entry: "+ns+" pointing to "+ip);
+					return;
+				}
+				
+				return;
+			}
+			
 			/* check for default address */
 			if(self.zoneFile.hasOwnProperty(ns)) {
 				if(!self.defaultAddress.hasOwnProperty(ns))
@@ -95,12 +122,6 @@ context.prototype.firstPass = function(line) {
 				self.defaultAddress[ns].push(ip);
 			}
 			
-			/* initial */
-			if(!self.zoneFile.hasOwnProperty(domName)) {
-				self.zoneFile[domName] = {};
-				self.zoneIPS[domName] = {};
-			}
-	
 			/* check for DHCP rules */
 			var dhcp = regexDHCP.exec(ns);
 			if(dhcp) {
@@ -170,7 +191,7 @@ context.prototype.addFile = function(file) {
 		ns = sp[0],
 		ip = sp[1];
 		
-		if(ns.length > 1 && ip.length > 1)
+		if(ns && ip && ns.length > 1 && ip.length > 1)
 			self.lines.push(line);
 	});
 	fd.on('end', function() {
@@ -277,7 +298,8 @@ context.prototype.render = function(cb) {
 					serial: serial,
 					list: self.zoneFile[zfile],
 					defaultAddress: self.defaultAddress[zfile],
-					nss: nss
+					nss: nss,
+					cname: self.zoneCNAME[zfile],
 				});
 				namedLocalZone.push({
 					domName: zfile,
