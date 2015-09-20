@@ -42,6 +42,7 @@ csv2bind ./csv2bindDemo.csv
 * DHCP integration
 * Manage nameservers zone declaration
 * Compute multiple files together
+* Auto zone files separation
 
 ## In-file options
 * **dhcp-X** : define a DHCP pool domain generator. For example dhcp-100.domain.com will generate 100 entries such as **dhcp-1-lease.domain.com** starting at the __IP given address__. The rendering pattern is modifiable by **dhcpEJS**

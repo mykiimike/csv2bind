@@ -33,6 +33,7 @@ function context(config) {
 	this.zoneFile = {};
 	this.revertFile = {};
 	this.defaultAddress = {};
+	this.zoneIPS = {};
 	this.compute = 0;
 	this.config = config;
 	this.tld = config.domain.split('.');
@@ -45,7 +46,8 @@ function context(config) {
 
 var regexDHCP = /^dhcp-([0-9]+)\./;
 var regexNS = /^ns([0-9]+)/;
-
+var regexDomain = /^([a-z0-9_.-]+)$/i;
+	
 context.prototype.firstPass = function(line) {
 	var self = this;
 	
@@ -60,6 +62,13 @@ context.prototype.firstPass = function(line) {
 		if(domName.length > 1) {
 			var domNamePre = domName.shift();
 			domName = domName.join('.');
+			
+			/* control NS */
+			if(!regexDomain.test(ns)) {
+				console.log("Skipping "+ns+" on line "+self.linesNum+" not a domain name");
+				self.filtered++;
+				return;
+			}
 			
 			/* control the input domName */
 			if(ns == self.config.domain) {
@@ -87,8 +96,10 @@ context.prototype.firstPass = function(line) {
 			}
 			
 			/* initial */
-			if(!self.zoneFile.hasOwnProperty(domName))
+			if(!self.zoneFile.hasOwnProperty(domName)) {
 				self.zoneFile[domName] = {};
+				self.zoneIPS[domName] = {};
+			}
 	
 			/* check for DHCP rules */
 			var dhcp = regexDHCP.exec(ns);
@@ -119,8 +130,14 @@ context.prototype.firstPass = function(line) {
 				return;
 			}
 			
-			/* default option */
+			/* update default zone */
 			self.zoneFile[domName][domNamePre] = ip.trim();
+			
+			/* add IP address */
+			if(!self.zoneIPS[domName][domNamePre])
+				self.zoneIPS[domName][domNamePre] = [];
+			
+			self.zoneIPS[domName][domNamePre].push(ip.trim());
 			
 			var ipRange = ip.split('.');
 			var ipRangePre = ipRange.pop();
@@ -168,7 +185,7 @@ context.prototype.addFile = function(file) {
 	
 };
 
-context.prototype.render = function(dir, cb) {
+context.prototype.render = function(cb) {
 	var self = this;
 	setInterval(function() {
 		
@@ -203,7 +220,7 @@ context.prototype.render = function(dir, cb) {
 			console.log("Processing second pass");
 			for(var zfile in self.zoneFile) {
 				var zone = self.zoneFile[zfile];
-				var fileName = dir+"/"+zfile+".zone";
+				var fileName = self.config.out+"/zones/"+zfile+".zone";
 				var now = new Date();
 				var serial = ""+now.getYear()+
 					now.getMonth()+
@@ -294,7 +311,7 @@ context.prototype.render = function(dir, cb) {
 				namedLocalRevert.push({
 					arpa: arpa
 				});
-				var fileName = dir+"/"+arpa;
+				var fileName = self.config.out+"/zones/"+arpa;
 				fs.writeFileSync(fileName, buf);
 			}
 
@@ -306,7 +323,7 @@ context.prototype.render = function(dir, cb) {
 				config: self.config
 			});
 
-			fs.writeFileSync("./named.conf.auto", buf);
+			fs.writeFileSync(self.config.out+"/named.conf.auto", buf);
 
 			cb();
 			clearInterval(this);
@@ -316,6 +333,7 @@ context.prototype.render = function(dir, cb) {
 
 var config = {
 	domain: "loopback.lo",
+	out: "./",
 	
 	revRefresh: 14400,
 	revRetry: 3600,
@@ -332,6 +350,7 @@ var config = {
 
 var info = {
 	domain: "Default UP domain",
+	out: "Output bind9 configuration",
 	
 	revRefresh: "Reverse ARPA refresh after 6 hours",
 	revRetry: "Reverse ARPA retry after 1 hour",
@@ -380,14 +399,14 @@ function check(a) {
 if(check("help") || check("-help")) {
 	console.log("csv2bind usage: csv2bind <commands> <options> file1.csv file2.csv file3.csv...");
 	console.log("Basic commands");
-	console.log("  --help: This message");
-	console.log("  --version: Version message");
-	console.log("  --verbose: Display log message");
-	console.log("  --demo: Generate a demo CSV file");
+	console.log("    --help: This message");
+	console.log("    --version: Version message");
+	console.log("    --verbose: Display log message");
+	console.log("    --demo: Generate a demo CSV file");
 	//console.log("  --quiet: Set quiet mode");
 	console.log("List of supported options");
 	for(var a in config)
-		console.log("  -"+a+": "+info[a]+". Default: "+config[a]);
+		console.log("    -"+a+": "+info[a]+". Default: "+config[a]);
 	
 	process.exit(0);
 }
@@ -397,7 +416,7 @@ if(check("version") || check("-version")) {
 	console.log(
 		"csv2bind "+pack.version+"\n"+
 		"Simple bind9 CSV translator\n"+
-		"Copyright (C) 2015  Michael VERGOZ\n"+
+		"Copyright (C) 2015  Michael VERGOZ @mykiimike\n"+
 		"\n"+
 		"This program is distributed in the hope that it will be useful,\n"+
 		"but WITHOUT ANY WARRANTY; without even the implied warranty of\n"+
@@ -416,9 +435,8 @@ if(check("demo") || check("-demo")) {
 
 /* is verbose ? */
 console = clim();
-if(!check("verbose") && !check("-verbose")) {
+if(!check("verbose") && !check("-verbose"))
 	console.log = function(m) {};
-}
 
 /* initialize app */
 console.info("csv2bind - Simple bind9 CSV translator version "+pack.version);
@@ -438,13 +456,29 @@ if(files.length == 0) {
 }
 console.info("Need to process "+files.length+" files");
 
+/* check output directory */
+try {
+	fs.statSync(config.out);
+} catch(e) {
+	console.error("Directory "+config.out+" does not exist, please read it first");
+	process.exit(-1);
+}
+
+/* check for zones/ directory */
+try {
+	fs.statSync(config.out+"/zones");
+} catch(e) {
+	fs.mkdirSync(config.out+"/zones");
+	console.log("Directory "+config.out+"/zones does not exist: creation");
+}
+
 /* here we go */
 var context = new context(config);
 
 for(var a in files)
 	context.addFile(files[a]);
 
-context.render("./zones", function() {
+context.render(function() {
 	console.info('Work done');
 });
 
