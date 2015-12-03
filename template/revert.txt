@@ -1,4 +1,4 @@
-@       IN      SOA     ns.<%= config.domain %>. root.<%= config.domain %>.     (
+@       IN      SOA     ns.<%= uplevel %>. root.<%= uplevel %>.     (
 	<%= serial %>      ;serial
 	14400              ;refresh
 	3600               ;retry
@@ -6,7 +6,7 @@
 	10800                ;minimum
 )
  
-<%= arpa %>.	IN	NS	ns.<%= config.domain %>.
+<%= arpa %>.	IN	NS	ns.<%= uplevel %>.
 
 <% for(var a in list) { %>
 <%= a %>	IN	PTR	<%= list[a] %>.<% } %>

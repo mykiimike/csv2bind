@@ -318,6 +318,7 @@ context.prototype.render = function(cb) {
 					self.defaultAddress[zfile] = [];
 				
 				var buf = ejs.render(tpl, {
+					uplevel: self.tldName,
 					config: self.config,
 					domName: zfile,
 					serial: serial,
@@ -351,6 +352,7 @@ context.prototype.render = function(cb) {
 				arpa.push("arpa");
 				var arpa = arpa.join('.');
 				var buf = ejs.render(tpl, {
+					uplevel: self.tldName,
 					config: self.config,
 					arpa: arpa,
 					serial: serial,
@@ -366,6 +368,7 @@ context.prototype.render = function(cb) {
 			/* named local files */
 			var tpl = fs.readFileSync("./template/named.local.txt").toString();
 			var buf = ejs.render(tpl, {
+				uplevel: self.tldName,
 				zones: namedLocalZone,
 				revert: namedLocalRevert,
 				config: self.config
