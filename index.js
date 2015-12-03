@@ -133,7 +133,7 @@ context.prototype.firstPass = function(line) {
 					var newNs = ejs.render(self.config.dhcpEJS, {
 						num: a,
 						rand: jen.password(5)
-					});
+					})+'.'+domName;
 					
 					var nIP = self.zoneFile[domName][newNs] = ipTrans.fromLong(ipBase+a);
 					
@@ -143,7 +143,7 @@ context.prototype.firstPass = function(line) {
 	
 					if(!self.revertFile[ipRange])
 						self.revertFile[ipRange] = {};
-					
+		
 					self.revertFile[ipRange][ipRangePre] = newNs;
 					self.inputs++;
 				}
