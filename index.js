@@ -79,7 +79,7 @@ context.prototype.firstPass = function(line) {
 				self.filtered++;
 				return;
 			}
-			console.log(ns, self.tldName);
+
 			/* control the input domName */
 			if(ns == self.tldName) {
 				/* special case for default address for global TLD */
@@ -91,9 +91,10 @@ context.prototype.firstPass = function(line) {
 			else {
 				var tldFound = false;
 				for(var a in self.tldList) {
+
 					var tld = self.tldList[a];
 					for(var a=aDomName.length-1, b=tld.length-1; b>=0; a--, b--) {
-						if(aDomName[a] != tld[b]) 
+						if(aDomName[a] == tld[b]) 
 							tldFound = true;
 					}
 				}
@@ -250,7 +251,7 @@ context.prototype.render = function(cb) {
 			
 			/* tld */
 			var TLD = self.zoneFile[self.tldName];
-			console.log(">>", self.tldName);
+
 			/* zone files */
 			var tpl = fs.readFileSync("./template/zone.txt").toString();
 
