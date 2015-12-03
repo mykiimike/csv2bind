@@ -37,12 +37,20 @@ function context(config) {
 	this.zoneCNAME = {};
 	this.compute = 0;
 	this.config = config;
-	this.tld = config.domain.split('.');
-	
+
+	var tldList = config.domain.split(',');
+	this.tldList = [];
+
+	for(var a in tldList)
+		this.tldList.push(tldList[a].trim().split('.'));
+	this.tld = this.tldList[0];
+	this.tldName = tldList[0].trim();
+
 	this.inputs = 0;
 	this.filtered = 0;
 	this.linesNum = 0;
 	this.lines = [];
+
 }
 
 var regexDHCP = /^dhcp-([0-9]+)\./;
@@ -64,16 +72,16 @@ context.prototype.firstPass = function(line) {
 		if(domName.length > 1) {
 			var domNamePre = domName.shift();
 			domName = domName.join('.');
-			
+
 			/* control NS */
 			if(!regexDomain.test(ns)) {
 				console.log("Skipping "+ns+" on line "+self.linesNum+" not a domain name");
 				self.filtered++;
 				return;
 			}
-			
+			console.log(ns, self.tldName);
 			/* control the input domName */
-			if(ns == self.config.domain) {
+			if(ns == self.tldName) {
 				/* special case for default address for global TLD */
 				if(!self.defaultAddress.hasOwnProperty(ns))
 					self.defaultAddress[ns] = [];
@@ -81,12 +89,19 @@ context.prototype.firstPass = function(line) {
 				return;
 			}
 			else {
-				for(var a=aDomName.length-1, b=self.tld.length-1; b>=0; a--, b--) {
-					if(aDomName[a] != self.tld[b]) {
-						console.log("Drop line "+ns+" on line "+self.linesNum);
-						self.filtered++;
-						return;
+				var tldFound = false;
+				for(var a in self.tldList) {
+					var tld = self.tldList[a];
+					for(var a=aDomName.length-1, b=tld.length-1; b>=0; a--, b--) {
+						if(aDomName[a] != tld[b]) 
+							tldFound = true;
 					}
+				}
+
+				if(tldFound == false) {
+					console.log("Drop line "+ns+" on line "+self.linesNum);
+					self.filtered++;
+					return;
 				}
 			}
 	
@@ -234,8 +249,8 @@ context.prototype.render = function(cb) {
 			var namedLocalRevert = [];
 			
 			/* tld */
-			var TLD = self.zoneFile[self.config.domain];
-			
+			var TLD = self.zoneFile[self.tldName];
+			console.log(">>", self.tldName);
 			/* zone files */
 			var tpl = fs.readFileSync("./template/zone.txt").toString();
 
@@ -270,9 +285,9 @@ context.prototype.render = function(cb) {
 					console.log("Creating NS entry for "+zfile);
 				}
 				
-				if(!zone.hasOwnProperty("ns")) {
+				if(!zone.hasOwnProperty("ns"))
 					console.warn("No NS entry for zone "+zfile+" and no default entry from TLD");
-				}
+				
 				
 				/* check root server */
 				if(!self.zoneFile[zfile].hasOwnProperty("root")) {
@@ -381,7 +396,7 @@ var config = {
 };
 
 var info = {
-	domain: "Default UP domain",
+	domain: "Default UP domain (multi domains separate by ',')",
 	out: "Output bind9 configuration",
 	
 	revRefresh: "Reverse ARPA refresh after 6 hours",

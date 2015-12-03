@@ -21,7 +21,6 @@ csv2bind --help
 
 Generate bind9 files:
 ```sh
-csv2bind --help
 csv2bind -domain=mydomain.com file1.csv file2.csv file3.csv
 ```
 
@@ -33,6 +32,12 @@ csv2bind --demo
 Process demonstration file and generate bind0 files:
 ```sh
 csv2bind ./csv2bindDemo.csv
+```
+
+Generate a couple of file into **mydir** directory:
+```sh
+mkdir mydir
+csv2bind -out=./mydir -domain=mydomain.com ./csv2bindDemo.csv
 ```
 
 ## Key features
