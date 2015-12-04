@@ -145,11 +145,11 @@ context.prototype.firstPass = function(line) {
 				var dhcpNum = dhcp[1];
 				var ipBase = ipTrans.toLong(ip);
 	
-				for(var a=1; a<=dhcpNum; a++) {
+				for(var a=0; a<dhcpNum; a++) {
 					var newNs = ejs.render(self.config.dhcpEJS, {
 						num: a,
 						rand: jen.password(5)
-					})+'.'+domName;
+					});
 					
 					var nIP = self.zoneFile[domName][newNs] = ipTrans.fromLong(ipBase+a);
 					
@@ -160,13 +160,15 @@ context.prototype.firstPass = function(line) {
 					if(!self.revertFile[ipRange])
 						self.revertFile[ipRange] = {};
 		
-					self.revertFile[ipRange][ipRangePre] = newNs;
+					self.revertFile[ipRange][ipRangePre] = newNs+'.'+domName;
 					self.inputs++;
 				}
 				
 				console.info("DHCP processing "+dhcpNum+" entries for "+ns+" starting at "+ip);
+
 				return;
 			}
+			
 			
 			/* update default zone */
 			self.zoneFile[domName][domNamePre] = ip.trim();
