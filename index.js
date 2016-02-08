@@ -255,7 +255,7 @@ context.prototype.render = function(cb) {
 			var TLD = self.zoneFile[self.tldName];
 
 			/* zone files */
-			var tpl = fs.readFileSync("./template/zone.txt").toString();
+			var tpl = fs.readFileSync(__dirname+"/template/zone.txt").toString();
 
 			console.log("Processing second pass");
 			for(var zfile in self.zoneFile) {
@@ -339,7 +339,7 @@ context.prototype.render = function(cb) {
 			}
 
 			/* revert files */
-			var tpl = fs.readFileSync("./template/revert.txt").toString();
+			var tpl = fs.readFileSync(__dirname+"/template/revert.txt").toString();
 
 			for(var zfile in self.revertFile) {
 				
@@ -368,7 +368,7 @@ context.prototype.render = function(cb) {
 			}
 
 			/* named local files */
-			var tpl = fs.readFileSync("./template/named.local.txt").toString();
+			var tpl = fs.readFileSync(__dirname+"/template/named.local.txt").toString();
 			var buf = ejs.render(tpl, {
 				uplevel: self.tldName,
 				zones: namedLocalZone,
