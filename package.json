@@ -2,7 +2,7 @@
 	"name": "csv2bind",
 	"description": "Simple bind9 CSV translator",
 	"version": "1.0.6",
- 	"license": "GPL-3.0",
+	"license": "GPL-3.0",
 	"keywords": [
 		"bind",
 		"bind9",
@@ -13,10 +13,10 @@
 	],
 	"main": "index.js",
 	"dependencies": {
-		"ejs": "^1.0.0",
-		"ip": "^1.0.1",
-		"colors": "^1.1.2",
 		"clim": "^1.1.1",
+		"colors": "^1.1.2",
+		"ejs": "^3.1.6",
+		"ip": "^1.0.1",
 		"node-jen": "^1.0.4"
 	},
 	"repository": {
@@ -29,7 +29,7 @@
 		"url": "https://github.com/mykiimike/csv2bind/issues"
 	},
 	"author": "Michael Vergoz <mv@verman.fr>",
-	"bin" : { 
-		"csv2bind" : "./index.js"
+	"bin": {
+		"csv2bind": "./index.js"
 	}
 }
